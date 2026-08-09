@@ -1,5 +1,6 @@
 {
   "name": "remotion-script-to-motion",
+  "description": "대본 기반 Remotion 모션그래픽 도구 모음",
   "owner": {
     "name": "jacob-cha-builder",
     "url": "https://github.com/jacob-cha-builder"
