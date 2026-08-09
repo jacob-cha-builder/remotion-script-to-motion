@@ -1,16 +1,20 @@
 {
   "name": "remotion-script-to-motion",
-  "description": "대본 기반 Remotion 모션그래픽 도구 모음",
+  "description": "HyperFrames 영상 제작의 한국어 대본 레이어",
   "owner": {
     "name": "jacob-cha-builder",
     "url": "https://github.com/jacob-cha-builder"
   },
+  "allowCrossMarketplaceDependenciesOn": ["hyperframes"],
   "plugins": [
     {
       "name": "script-to-motion",
       "source": "./plugins/script-to-motion",
-      "version": "0.5.0",
-      "description": "대본(script.json)을 단일 진실 공급원으로 삼아 Remotion 모션그래픽을 만드는 파이프라인. 대본 검증 → 아트디렉션 잠금 → 코드 생성 → 프레임 단위 시각 QA → 렌더."
+      "version": "0.6.0",
+      "description": "한국어 나레이션 영상의 대본 길이를 검사한다. 발화 길이 추정, 조사 처리, 나레이션↔씬 길이 정합. 파이프라인은 HyperFrames /hyperframes 라우터가 소유한다.",
+      "dependencies": [
+        { "name": "core-skills", "marketplace": "hyperframes" }
+      ]
     }
   ]
 }
