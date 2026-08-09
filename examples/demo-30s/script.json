@@ -6,7 +6,8 @@
     "height": 1080,
     "totalSec": 30,
     "aspect": "16:9",
-    "tone": "confident-minimal"
+    "tone": "confident-minimal",
+    "narration": false
   },
   "scenes": [
     {

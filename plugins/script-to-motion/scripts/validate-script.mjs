@@ -6,9 +6,11 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { estimateSec, suggestDuration, fmtDuration, PAD } from './narration.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CATALOG_PATH = resolve(HERE, '../assets/motion-catalog.json');
+const REGISTRY_PATH = resolve(HERE, '../assets/hf-registry.json');
 
 const ROLES = ['hook', 'problem', 'solution', 'how', 'proof', 'cta'];
 const ASPECTS = ['16:9', '9:16', '1:1'];
@@ -32,6 +34,10 @@ const RULE_NAMES = {
   8: '최소 노출 시간',
   9: 'id 유일성 / kebab-case',
   10: 'hook 구조',
+  11: '나레이션 존재',
+  12: '나레이션이 씬 길이에 들어감',
+  13: '침묵 과다',
+  14: 'blocks 가 HyperFrames 레지스트리에 존재',
 };
 
 const errors = [];
@@ -65,6 +71,21 @@ try {
   process.exit(2);
 }
 
+// HyperFrames 레지스트리 — blocks 화이트리스트 (규칙 14)
+let blockNames = new Set();
+try {
+  const reg = JSON.parse(readFileSync(REGISTRY_PATH, 'utf8'));
+  for (const group of Object.values(reg.byType ?? {})) {
+    for (const k of Object.keys(group)) blockNames.add(k);
+  }
+} catch (e) {
+  console.error(`[FATAL] HyperFrames 레지스트리를 읽을 수 없습니다 (${REGISTRY_PATH}): ${e.message}`);
+  process.exit(2);
+}
+
+// 나레이션 사용 여부 — 기본 true, meta.narration === false 로 끈다
+const narrated = script?.meta?.narration !== false;
+
 // ── 규칙 1: 필수 필드 + 타입 ─────────────────────────────────────────────────
 const meta = script.meta;
 if (!meta || typeof meta !== 'object') {
@@ -93,7 +114,12 @@ scenes.forEach((s, i) => {
   if (typeof s?.id !== 'string') fail(1, at, 'id 는 문자열이어야 합니다');
   if (typeof s?.startSec !== 'number') fail(1, at, 'startSec 는 숫자여야 합니다');
   if (typeof s?.durationSec !== 'number') fail(1, at, 'durationSec 는 숫자여야 합니다');
-  if (typeof s?.copy !== 'string') fail(1, at, 'copy 는 문자열이어야 합니다');
+  // 나레이션이 있으면 화면 카피는 선택 — 말이 메시지를 나르고 화면은 보조한다
+  if (s?.copy !== undefined && typeof s.copy !== 'string') {
+    fail(1, at, 'copy 는 문자열이어야 합니다');
+  } else if (s?.copy === undefined && !narrated) {
+    fail(1, at, '나레이션을 끈 대본(meta.narration=false)에서는 copy 가 필수입니다');
+  }
   if (!ROLES.includes(s?.role)) fail(1, at, `role 은 ${ROLES.join(' | ')} 중 하나여야 합니다 (현재: ${JSON.stringify(s?.role)})`);
 });
 
@@ -133,6 +159,10 @@ scenes.forEach((s, i) => {
 // ── 규칙 5: emphasis ⊂ copy ──────────────────────────────────────────────────
 scenes.forEach((s, i) => {
   if (s.emphasis === undefined) return;
+  if (typeof s.copy !== 'string') {
+    fail(5, `scenes[${i}] (id: ${s.id})`, 'emphasis 를 쓰려면 copy 가 있어야 합니다');
+    return;
+  }
   if (typeof s.emphasis !== 'string' || !s.copy.includes(s.emphasis)) {
     fail(5, `scenes[${i}] (id: ${s.id})`,
       `emphasis ${JSON.stringify(s.emphasis)} 가 copy ${JSON.stringify(s.copy)} 안에 없습니다. 하이라이트 렌더링이 크래시합니다`);
@@ -162,6 +192,7 @@ scenes.forEach((s, i) => {
 const aspect = meta.aspect ?? '16:9';
 const cap = CAPS[aspect] ?? CAPS['16:9'];
 scenes.forEach((s, i) => {
+  if (typeof s.copy !== 'string') return; // 나레이션만 있는 씬 — 화면 카피 없음
   const words = s.copy.trim().split(/\s+/).filter(Boolean).length;
   const chars = [...s.copy].length;
   const suffix = aspect === '16:9' ? '' : ` (${aspect} 기준)`;
@@ -202,13 +233,71 @@ if (hookIdx.length === 0) {
   fail(10, `scenes[${hookIdx[0]}]`, `hook 은 첫 씬이어야 합니다 (현재 ${hookIdx[0]}번째)`);
 }
 
+// ── 규칙 11~13: 나레이션이 씬 길이를 결정한다 ────────────────────────────────
+if (narrated) {
+  scenes.forEach((s, i) => {
+    const at = `scenes[${i}] (id: ${s.id})`;
+
+    if (typeof s.narration !== 'string' || !s.narration.trim()) {
+      fail(11, at, 'narration 이 없습니다. 음성 없는 영상이면 meta.narration=false 로 끄세요');
+      return;
+    }
+
+    // 실측이 있으면 실측 우선 (P4 reconcile-tts.mjs 가 narrationSec 을 기록한다)
+    const measured = typeof s.narrationSec === 'number' ? s.narrationSec : null;
+    const spoken = measured ?? estimateSec(s.narration);
+    const src = measured !== null ? '실측' : '추정';
+    const slack = s.durationSec - spoken;
+
+    if (slack < PAD.min - EPS) {
+      const need = suggestDuration(s.narration, meta.fps);
+      fail(12, at,
+        `나레이션 ${src} ${spoken.toFixed(2)}초인데 씬은 ${s.durationSec}초 — 여백이 ${slack.toFixed(2)}초뿐입니다 ` +
+        `(최소 ${PAD.min}초). durationSec 을 ${fmtDuration(need)} 이상으로 올리거나 나레이션을 줄이세요`);
+    } else if (slack > PAD.max + EPS) {
+      fail(13, at,
+        `나레이션 ${src} ${spoken.toFixed(2)}초인데 씬은 ${s.durationSec}초 — ${slack.toFixed(2)}초가 빕니다 ` +
+        `(최대 ${PAD.max}초). 말이 끝난 뒤 정적이 흐릅니다. 씬을 줄이거나 나레이션을 늘리세요`);
+    }
+  });
+}
+
+// ── 규칙 14: blocks 가 HyperFrames 레지스트리에 존재 ─────────────────────────
+scenes.forEach((s, i) => {
+  if (s.blocks === undefined) return;
+  if (!Array.isArray(s.blocks)) {
+    fail(14, `scenes[${i}] (id: ${s.id})`, 'blocks 는 배열이어야 합니다');
+    return;
+  }
+  for (const b of s.blocks) {
+    if (!blockNames.has(b)) {
+      fail(14, `scenes[${i}] (id: ${s.id})`,
+        `block ${JSON.stringify(b)} 는 HyperFrames 레지스트리에 없습니다. ` +
+        `references/block-catalog.md 에서 고르거나 npx hyperframes add --list 로 확인하세요`);
+    }
+  }
+});
+
 report();
 
 // ── 출력 ─────────────────────────────────────────────────────────────────────
 function report() {
   if (errors.length === 0) {
     const frames = Math.round(meta.totalSec * meta.fps);
-    console.log(`✔ script 검증 통과 — ${scenes.length}씬 / ${meta.totalSec}초 / ${frames}프레임 @ ${meta.fps}fps`);
+    let line = `✔ script 검증 통과 — ${scenes.length}씬 / ${meta.totalSec}초 / ${frames}프레임 @ ${meta.fps}fps`;
+    if (narrated) {
+      const anyMeasured = scenes.some((s) => typeof s.narrationSec === 'number');
+      const spoken = scenes.reduce(
+        (a, s) => a + (typeof s.narrationSec === 'number' ? s.narrationSec : estimateSec(s.narration ?? '')),
+        0,
+      );
+      const pct = Math.round((spoken / meta.totalSec) * 100);
+      line += `\n  나레이션 ${anyMeasured ? '실측' : '추정'} ${spoken.toFixed(1)}초 (발화 밀도 ${pct}%)`;
+      if (!anyMeasured) line += ' — P4 에서 TTS 실측으로 보정하세요';
+    } else {
+      line += '\n  나레이션 없음 (meta.narration=false)';
+    }
+    console.log(line);
     process.exit(0);
   }
   console.error(`\n✘ script 검증 실패 — ${errors.length}건\n`);

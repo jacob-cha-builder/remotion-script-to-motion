@@ -9,7 +9,7 @@
     {
       "name": "script-to-motion",
       "source": "./plugins/script-to-motion",
-      "version": "0.4.1",
+      "version": "0.5.0",
       "description": "대본(script.json)을 단일 진실 공급원으로 삼아 Remotion 모션그래픽을 만드는 파이프라인. 대본 검증 → 아트디렉션 잠금 → 코드 생성 → 프레임 단위 시각 QA → 렌더."
     }
   ]
