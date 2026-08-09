@@ -52,8 +52,17 @@ claude plugin tag --push          # script-to-motion--v<version> 태그 생성·
 **설치한 쪽 (갱신)**
 ```bash
 claude plugin marketplace update remotion-script-to-motion
-claude plugin update script-to-motion
+claude plugin update script-to-motion@remotion-script-to-motion --scope local
 ```
+
+갱신 뒤 `/reload-plugins` 또는 재시작해야 적용된다.
+
+> ⚠️ 두 인자 모두 생략하면 실패한다. 직접 겪은 것:
+> - `claude plugin update script-to-motion` → `Plugin "script-to-motion" not found`
+>   `--scope` 기본값이 `user` 라서 local 설치를 못 찾는다
+> - `--scope local` 만 붙여도 여전히 실패 → **`plugin@marketplace` 정규화된 이름**이 필요하다
+>
+> 설치할 때 쓴 scope 를 그대로 쓰고, 이름은 항상 `@마켓플레이스` 까지 붙인다.
 
 ## 제거
 
