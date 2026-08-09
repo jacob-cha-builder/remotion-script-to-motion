@@ -10,51 +10,69 @@
 
 ## 설치
 
-설치 방법이 세 가지다. **A 가 기본**이고, 전역에 아무것도 쓰지 않는다.
-
-### A. 클론해서 그 폴더 안에서만 (전역 오염 0)
+GitHub 리포를 마켓플레이스로 등록하고 설치한다. 버전은 git 태그로 관리된다.
 
 ```bash
-git clone https://github.com/jacob-cha-builder/remotion-script-to-motion.git
-cd remotion-script-to-motion
-claude          # 리포 루트에서 실행. 워크스페이스 신뢰 다이얼로그 수락
+claude plugin marketplace add jacob-cha-builder/remotion-script-to-motion --scope local
+claude plugin install script-to-motion@remotion-script-to-motion --scope local
 ```
 
-`.claude/skills/script-to-motion/` 이 `script-to-motion@skills-dir` 플러그인으로 자동 로드된다.
-마켓플레이스 등록도 `plugin install` 도 없고 `~/.claude/` 에 아무것도 쓰지 않는다. 확인:
+비공개 리포이므로 git 인증이 되어 있어야 한다 (`gh auth login`).
+
+### `--scope` 는 "어느 설정 파일에 기록할지"만 정한다
+
+명령은 셋 다 동일하고, 기능 차이도 없다. 기록 위치만 다르다.
+
+| scope | 기록 위치 | 적용 범위 |
+|---|---|---|
+| `local` | `.claude/settings.local.json` (gitignore 됨) | **이 프로젝트, 나만** |
+| `project` | `.claude/settings.json` (커밋됨) | 이 리포를 클론한 모든 사람 |
+| `user` (기본) | `~/.claude/settings.json` | 내 모든 프로젝트 |
+
+팀과 공유하려면 `--scope project`, 어디서나 쓰려면 `--scope user`.
+
+> 어떤 scope 를 쓰든 플러그인 본체는 `~/.claude/plugins/cache/` 에 복사된다 (약 112K).
+> 이건 마켓플레이스 방식의 동작 방식이지 scope 와 무관하다.
+
+## 업데이트
+
+리포에 변경을 푸시하고 태그를 붙이면, 설치된 쪽에서 당겨받는다.
+
+**리포 쪽 (릴리스)**
+```bash
+# plugins/script-to-motion/.claude-plugin/plugin.json 의 version 을 올리고
+# .claude-plugin/marketplace.json 의 version 도 같은 값으로 맞춘 뒤
+git add -A && git commit -m "..." && git push
+claude plugin tag --push          # script-to-motion--v<version> 태그 생성·푸시
+```
+
+`claude plugin tag` 는 태그를 만들기 전에 플러그인을 검증하고, `plugin.json` 과 마켓플레이스
+항목의 version 이 일치하는지, 작업 트리가 깨끗한지 확인한다. 어긋나면 거부한다.
+
+**설치한 쪽 (갱신)**
+```bash
+claude plugin marketplace update remotion-script-to-motion
+claude plugin update script-to-motion
+```
+
+## 제거
 
 ```bash
-claude --plugin-dir ./.claude/skills/script-to-motion plugin list
-# ❯ script-to-motion@inline   Status: ✔ loaded
+claude plugin uninstall script-to-motion --scope local
+claude plugin marketplace remove remotion-script-to-motion --scope local
 ```
 
-> ⚠️ 프로젝트 스코프 `@skills-dir` 플러그인은 **Claude Code 를 실행한 디렉터리의
-> `.claude/skills/`** 에서만 로드된다. 하위 디렉터리에서 실행하면 안 잡힌다.
-> 리포 루트에서 실행하거나 `/reload-plugins` 를 쓴다.
+`--prune` 을 붙이면 딸려 설치된 의존성까지 정리한다 (이 플러그인은 의존성이 없다).
 
-### B. 내 프로젝트에 폴더째 복사
+## 개발 중이라면
+
+캐시로 설치된 상태에서는 소스를 고쳐도 반영되지 않는다. 고치면서 바로 확인하려면:
 
 ```bash
-cp -r remotion-script-to-motion/.claude/skills/script-to-motion your-project/.claude/skills/
+claude --plugin-dir ./plugins/script-to-motion
 ```
 
-폴더 하나가 자기완결적이다. 외부 의존성이 없다.
-
-### C. 모든 프로젝트에서 쓰기 (전역 설치)
-
-```bash
-claude plugin marketplace add jacob-cha-builder/remotion-script-to-motion
-claude plugin install script-to-motion@remotion-script-to-motion
-```
-
-`~/.claude/` 에 기록된다. **폴더 격리를 원하면 A 를 쓴다.**
-비공개 리포이므로 `gh auth login` 등으로 git 인증이 되어 있어야 한다.
-
-제거:
-```bash
-claude plugin uninstall script-to-motion
-claude plugin marketplace remove remotion-script-to-motion
-```
+세션 한정으로 로드되고 아무것도 기록하지 않는다. `/reload-plugins` 로 변경을 다시 읽는다.
 
 ## 스킬
 
@@ -119,29 +137,39 @@ claude plugin install remotion@remotion
 cd examples/demo-30s
 npm install
 npm run dev                                    # Remotion Studio
-node ../../.claude/skills/script-to-motion/scripts/validate-script.mjs script.json
+node ../../plugins/script-to-motion/scripts/validate-script.mjs script.json
 npx remotion render src/index.ts Main out/video.mp4
 ```
 
 ## 구조
 
 ```
-.claude/skills/script-to-motion/       # 플러그인 (자기완결적)
+.claude-plugin/marketplace.json        # 마켓플레이스 항목 (설치 진입점)
+
+plugins/script-to-motion/              # 플러그인 (자기완결적)
 ├── .claude-plugin/plugin.json
 ├── skills/{new,check,qa}/SKILL.md
 ├── references/                        # 단계 진입 시에만 로드
-│   ├── script-writing.md  art-direction.md
-│   ├── motion-patterns.md qa-rubric.md
+│   ├── interview.md                   # P1a 인터뷰 · 정보 밀도 예산
+│   ├── script-writing.md              # P1 대본 규칙
+│   ├── infographic-catalog.md         # P1b 인포그래픽 16종
+│   ├── prompt-patterns.md             # P1b intent 작성 규칙
+│   ├── art-direction.md               # P2 토큰 잠금
+│   ├── remotion-elements.md           # P3 공식 Element 17종
+│   ├── motion-patterns.md             # P3 모션 프리미티브
+│   └── qa-rubric.md                   # P4 채점 루브릭
 ├── assets/
 │   ├── motion-catalog.json            # 모션명 단일 진실 공급원
 │   └── script.schema.json
 ├── hooks/hooks.json                   # 게이트 기계 강제
 └── scripts/                           # 의존성 0, 출력만 컨텍스트 소비
-    ├── validate-script.mjs
-    ├── guard-tokens.mjs
-    └── contact-sheet.mjs
+    ├── validate-script.mjs            # 게이트 — exit 1 이면 코드 생성 금지
+    ├── guard-tokens.mjs               # 아트디렉션 위반 되먹임
+    ├── script-report.mjs              # 글자수 + 인포그래픽 추천
+    └── contact-sheet.mjs              # 시각 QA 콘택트시트
 
-examples/demo-30s/                     # 실동작 참고 구현
+examples/demo-30s/                     # 16:9 30초 참고 구현
+examples/short-20s/                    # 9:16 20초 세로 숏폼
 ├── script.json                        # 단일 진실 공급원
 └── src/{tokens,motion,script,Root,Main,SceneFrame}.tsx + scenes/
 ```
