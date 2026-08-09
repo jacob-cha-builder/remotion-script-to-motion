@@ -19,14 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-NOTE ON REMOTION
-
-This MIT license covers only the code in this repository (the plugin, its
-scripts and documentation, and the example compositions).
-
-It does NOT cover Remotion itself. Remotion is a separate project under its
-own license and is installed as an npm dependency, not redistributed here.
-See the "라이선스" section of README.md and https://remotion.dev/license
