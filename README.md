@@ -31,8 +31,24 @@ claude plugin install script-to-motion@remotion-script-to-motion --scope local
 
 팀과 공유하려면 `--scope project`, 어디서나 쓰려면 `--scope user`.
 
+### 하위 폴더에서도 적용된다
+
+`local`/`project` scope 는 프로젝트 루트를 찾아 **거슬러 올라간다.** 리포 안 어디서
+Claude Code 를 실행해도 잡히고, 밖에서는 잡히지 않는다. 실측:
+
+| 실행 위치 | 상태 |
+|---|---|
+| `video/` | ✔ enabled |
+| `video/examples/demo-30s/` | ✔ enabled |
+| `video/examples/demo-30s/src/` | ✔ enabled |
+| `~` (리포 밖) | ✘ disabled |
+
+> `@skills-dir` 방식은 이게 안 된다 — 실행한 디렉터리의 `.claude/skills/` 만 보고
+> 상위로 올라가지 않는다. 하위 폴더에서 쓰려면 마켓플레이스 설치를 써야 하는 이유다.
+
 > 어떤 scope 를 쓰든 플러그인 본체는 `~/.claude/plugins/cache/` 에 복사된다 (약 112K).
-> 이건 마켓플레이스 방식의 동작 방식이지 scope 와 무관하다.
+> 이건 마켓플레이스 방식의 동작 방식이지 scope 와 무관하다. 리포 밖에서는 `disabled` 로
+> 표시되어 동작하지 않는다.
 
 ## 업데이트
 
@@ -134,6 +150,30 @@ claude plugin install remotion@remotion
 ```
 
 > 위 명령들은 전역 설정을 건드린다. 폴더 격리를 유지하려면 설치하지 말고, 에이전트가 필요 시 웹 문서를 참조하게 두면 된다.
+
+## 라이선스 — 읽고 시작하세요
+
+이 리포의 코드(플러그인·스크립트·문서·예제 컴포지션)는 **MIT** 입니다.
+
+**Remotion 은 별개이고, MIT 가 아닙니다.** 이 플러그인은 Remotion 을 npm 의존성으로 쓸 뿐
+재배포하지 않지만, 이걸 쓰려면 결국 Remotion 을 설치하게 되므로 그쪽 라이선스가 적용됩니다.
+
+[Remotion License](https://remotion.dev/license) 기준 **무료 사용 대상**:
+
+- 개인
+- **직원 3인 이하** 영리 조직
+- 비영리 조직
+- 도입 검토 중이며 아직 상업적으로 쓰지 않는 경우
+
+여기에 해당하지 않으면 [remotion.pro](https://remotion.pro) 에서 **유료 Company License** 를
+받아야 합니다. 직원 4명 이상인 회사에서 업무로 쓴다면 그 대상입니다.
+
+또한 Remotion 라이선스는 *"Remotion 코드를 복사·수정해 자신의 파생물을 판매·대여·라이선스·
+재라이선스하는 것"* 을 금지합니다. 이 리포는 Remotion 코드를 담고 있지 않으므로 해당되지
+않지만, 포크해서 뭔가 팔 생각이라면 확인하세요.
+
+> 이 프로젝트는 Remotion 과 무관한 서드파티이며, Remotion 팀의 보증·제휴를 받지 않았습니다.
+> 리포 이름의 "remotion" 은 대상 렌더러를 가리키는 표기입니다.
 
 ## 범위 밖 (의도적)
 
