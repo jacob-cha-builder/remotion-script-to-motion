@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "p=$(jq -r '.tool_input.file_path // empty'); case \"$p\" in *script.json) node \"${CLAUDE_PLUGIN_ROOT}/scripts/validate-script.mjs\" \"$p\" >&2 ;; esac; exit 0"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "p=$(jq -r '.tool_input.file_path // empty'); case \"$p\" in *.tsx) node \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-tokens.mjs\" \"$p\" >&2 ;; esac; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "Acme 제품 런칭 30초",
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "totalSec": 30,
+    "aspect": "16:9",
+    "tone": "confident-minimal"
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "role": "hook",
+      "startSec": 0,
+      "durationSec": 0.5,
+      "copy": "매일 3시간을 잃고 있습니다",
+      "emphasis": "3시간",
+      "intent": "충격적 통계로 문제부터 연다",
+      "motion": [
+        "stagger-in",
+        "number-countup"
+      ],
+      "exit": "fade-scale-out"
+    },
+    {
+      "id": "problem",
+      "role": "problem",
+      "startSec": 0.5,
+      "durationSec": 8.5,
+      "copy": "회의록 정리에만 그렇습니다",
+      "emphasis": "회의록 정리",
+      "intent": "손실의 출처를 특정",
+      "motion": [
+        "rise-in",
+        "highlight-sweep",
+        "drift"
+      ],
+      "exit": "sink-out"
+    },
+    {
+      "id": "solution",
+      "role": "solution",
+      "startSec": 9,
+      "durationSec": 5,
+      "copy": "Acme가 자동으로 정리합니다",
+      "emphasis": "자동으로",
+      "intent": "해결책 제시 — 첫 브랜드 노출",
+      "motion": [
+        "scale-in",
+        "scale-pop"
+      ],
+      "exit": "wipe-out"
+    },
+    {
+      "id": "how",
+      "role": "how",
+      "startSec": 14,
+      "durationSec": 6,
+      "copy": "녹음 버튼만 누르면 끝",
+      "emphasis": "녹음 버튼",
+      "intent": "사용 난이도가 0임을 보여줌",
+      "motion": [
+        "wipe-in",
+        "draw-in",
+        "breathe"
+      ],
+      "exit": "fade-out"
+    },
+    {
+      "id": "proof",
+      "role": "proof",
+      "startSec": 20,
+      "durationSec": 6,
+      "copy": "이미 1200팀이 씁니다",
+      "emphasis": "1200팀",
+      "intent": "사회적 증명으로 신뢰 확보",
+      "motion": [
+        "number-countup",
+        "stagger-in"
+      ],
+      "exit": "blur-out"
+    },
+    {
+      "id": "cta",
+      "role": "cta",
+      "startSec": 26,
+      "durationSec": 4,
+      "copy": "acme.com 무료로 시작",
+      "emphasis": "무료로",
+      "intent": "단일 행동 지시",
+      "motion": [
+        "rise-in",
+        "underline-draw"
+      ],
+      "exit": "fade-out"
+    }
+  ]
+}

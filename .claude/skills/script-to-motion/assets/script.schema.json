@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jacob/video/script.schema.json",
+  "title": "script-to-motion script",
+  "description": "모션그래픽 대본. 에디터 자동완성/문서화용. 실제 게이트는 scripts/validate-script.mjs 가 담당한다 (스키마로 표현 불가능한 타임라인 연속성·합계·부분문자열 규칙 포함).",
+  "type": "object",
+  "required": ["meta", "scenes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "meta": {
+      "type": "object",
+      "required": ["fps", "width", "height", "totalSec"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "fps": { "type": "number", "enum": [24, 25, 30, 50, 60] },
+        "width": { "type": "integer", "minimum": 16 },
+        "height": { "type": "integer", "minimum": 16 },
+        "totalSec": { "type": "number", "exclusiveMinimum": 0 },
+        "aspect": { "type": "string", "enum": ["16:9", "9:16", "1:1"] },
+        "tone": { "type": "string", "description": "아트디렉션 시드. 예: confident-minimal, playful-bold" }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "startSec", "durationSec", "copy"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "description": "kebab-case, 유일. Main.tsx REGISTRY 의 키가 된다"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["hook", "problem", "solution", "how", "proof", "cta"],
+            "description": "hook 은 정확히 1개이며 첫 씬이어야 한다"
+          },
+          "startSec": { "type": "number", "minimum": 0 },
+          "durationSec": { "type": "number", "minimum": 1.2 },
+          "copy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "화면에 뜨는 글자. 7단어 또는 32자 이내"
+          },
+          "emphasis": {
+            "type": "string",
+            "description": "copy 의 부분 문자열이어야 한다"
+          },
+          "intent": {
+            "type": "string",
+            "description": "이 씬이 시각적으로 무엇을 해야 하는지. 코드 생성 품질을 좌우한다"
+          },
+          "motion": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "assets/motion-catalog.json 의 enter/emphasis/ambient 키만 허용"
+          },
+          "exit": {
+            "type": "string",
+            "description": "assets/motion-catalog.json 의 exit 키만 허용"
+          }
+        }
+      }
+    }
+  }
+}

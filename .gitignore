@@ -1,0 +1,7 @@
+node_modules/
+out/
+.DS_Store
+*.log
+
+# 내부 작업 기록 — 계획서·증거 파일은 로컬에만 둔다
+.lazycc/

@@ -1,0 +1,32 @@
+{
+  "_comment": "모션 프리미티브 단일 진실 공급원. validate-script.mjs가 이 파일을 화이트리스트로 읽고, references/motion-patterns.md가 이 파일을 문서화한다. 여기에 없는 이름은 대본 검증에서 거부된다.",
+  "enter": {
+    "stagger-in": "요소들이 2~4프레임 간격으로 순차 등장 (fade + rise + scale)",
+    "rise-in": "아래에서 위로 올라오며 페이드인",
+    "scale-in": "중심에서 커지며 등장",
+    "wipe-in": "마스크가 열리며 드러남",
+    "typewriter": "글자 단위 순차 노출",
+    "number-countup": "숫자가 0에서 목표값까지 스프링으로 증가",
+    "draw-in": "선/패스가 그려지며 등장",
+    "blur-in": "블러가 풀리며 선명해짐"
+  },
+  "emphasis": {
+    "highlight-sweep": "강조 구간에 색 스와이프가 지나감",
+    "underline-draw": "밑줄이 좌→우로 그려짐",
+    "scale-pop": "짧게 커졌다 제자리로 (스프링)",
+    "color-shift": "강조 토큰 색으로 전환"
+  },
+  "ambient": {
+    "breathe": "정지 요소의 미세 사인파 스케일 (완전 정지 방지)",
+    "drift": "배경 요소의 느린 위치 이동",
+    "parallax": "레이어별 속도차 이동",
+    "grain": "필름 그레인 오버레이"
+  },
+  "exit": {
+    "fade-out": "불투명도만 감소",
+    "fade-scale-out": "축소하며 페이드아웃",
+    "sink-out": "아래로 내려가며 페이드아웃",
+    "wipe-out": "마스크가 닫히며 사라짐",
+    "blur-out": "블러가 끼며 사라짐"
+  }
+}
