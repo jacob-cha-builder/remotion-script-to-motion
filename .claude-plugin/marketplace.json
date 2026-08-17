@@ -5,15 +5,20 @@
     "name": "jacob-cha-builder",
     "url": "https://github.com/jacob-cha-builder"
   },
-  "allowCrossMarketplaceDependenciesOn": ["hyperframes"],
+  "allowCrossMarketplaceDependenciesOn": [
+    "hyperframes"
+  ],
   "plugins": [
     {
       "name": "script-to-motion",
       "source": "./plugins/script-to-motion",
-      "version": "0.6.0",
-      "description": "한국어 나레이션 영상의 대본 길이를 검사한다. 발화 길이 추정, 조사 처리, 나레이션↔씬 길이 정합. 파이프라인은 HyperFrames /hyperframes 라우터가 소유한다.",
+      "version": "1.0.0",
+      "description": "HyperFrames 로 한국어 나레이션 영상을 만들 때 쓰는 보조 레이어. 한국어 TTS(Piper) 생성과 나레이션↔씬 길이 검사. 파이프라인은 /hyperframes 가 소유한다.",
       "dependencies": [
-        { "name": "core-skills", "marketplace": "hyperframes" }
+        {
+          "name": "core-skills",
+          "marketplace": "hyperframes"
+        }
       ]
     }
   ]

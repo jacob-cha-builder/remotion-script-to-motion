@@ -1,0 +1,35 @@
+{
+  "voices": [
+    {
+      "path": "audio/line-01.wav",
+      "duration_s": 4.075102,
+      "frame": 1,
+      "text": "AI로 만든 영상은, 두 번째 컷에서 무너집니다.",
+      "words": []
+    },
+    {
+      "path": "audio/line-02.wav",
+      "duration_s": 5.944308,
+      "frame": 2,
+      "text": "길이가 어긋나고 자막이 밀립니다. 대본 없이 코드부터 썼기 때문입니다.",
+      "words": []
+    },
+    {
+      "path": "audio/line-03.wav",
+      "duration_s": 7.813515,
+      "frame": 3,
+      "text": "그래서 순서를 뒤집었습니다. 대본을 먼저 쓰고, 기계가 그 대본을 검사한 다음에야 코드를 만듭니다.",
+      "words": []
+    },
+    {
+      "path": "audio/line-04.wav",
+      "duration_s": 6.791837,
+      "frame": 4,
+      "text": "검사는 열네 가지입니다. 타임라인 구멍, 길이 불일치, 나레이션 길이까지 봅니다.",
+      "words": []
+    }
+  ],
+  "total_duration_s": 24.624762,
+  "sfx": [],
+  "bgm": null
+}
