@@ -125,7 +125,9 @@ npx hyperframes transcribe videos/<name>/audio/line-01.wav --language ko --json
 plugins/script-to-motion/
 ├── .claude-plugin/plugin.json
 ├── skills/ko-video/SKILL.md        # /hyperframes 에 붙는 보조 레이어
-├── references/korean-narration.md  # 발화 속도 · 조사 · 숫자 · 카피 예산
+├── references/
+│   ├── korean-narration.md         # 발화 속도 · 조사 · 숫자 · 카피 예산
+│   └── korean-typography.md        # @font-face 폴백 · keep-all 줄바꿈
 ├── hooks/hooks.json                # SCRIPT.md 저장 시 자동 검사
 └── scripts/                        # 의존성 0 (Node 내장 + piper/ffprobe 서브프로세스)
     ├── check-script.mjs            # 게이트 — 상류 산출물을 읽는다
@@ -134,8 +136,8 @@ plugins/script-to-motion/
     └── parse-plan.mjs              # SCRIPT.md / STORYBOARD.md 파서
 ```
 
-`examples/remotion-legacy-*` 는 Remotion 시절 구현으로, 참고용 동결이다.
-Remotion 파이프라인 전체는 `script-to-motion--v0.6.0` 태그에 남아 있다.
+v0.6.0 까지 쓰던 Remotion 파이프라인과 예제는 `script-to-motion--v1.0.0` 태그에 동결되어 있다
+(`git show script-to-motion--v1.0.0:<path>`). 현재 트리에는 없다.
 
 ## 라이선스
 

@@ -94,6 +94,16 @@ npx hyperframes transcribe videos/<name>/audio/line-01.wav --language ko --json
 - **나레이션에는 읽는 대로** 쓰고 화면 카피에는 숫자로 — `narration: "열네 가지"` / `copy: "14가지"`.
 - 화면 카피 상한: 16:9 = 7단어/32자, 9:16 = 5단어/20자, 1:1 = 6단어/26자.
 
+## 컴포지션에 한글을 넣을 때 (Step 4 이후)
+
+`references/korean-typography.md` 를 읽어라. 실측으로 확인한 두 가지:
+
+- **한글 폰트는 `@font-face` 를 선언해야 한다.** 자동 해석 목록에 없어서 조용히 폴백한다.
+  OS 번들 폰트는 `src: local("AppleSDGothicNeo-Bold")` 로 충분하다 — `lint` 가 에러로 잡는다.
+- **본문에 `word-break: keep-all` 을 넣어라.** 없으면 어절 한가운데에서 줄이 끊긴다
+  (`무너집니다` → `무너` / `집니다`). **`check` 가 못 잡는다** — 깨진 상태로 0 에러 통과한다.
+  `snapshot --zoom ".head"` 로 눈으로 봐야 한다.
+
 ## 한국어가 아니면
 
 이 스킬은 비켜선다. `SCRIPT.md` 가 없으면 검사기가 그대로 통과시키고,
