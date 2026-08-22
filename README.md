@@ -52,8 +52,8 @@
 
 ```bash
 claude plugin marketplace add heygen-com/hyperframes --scope local
-claude plugin marketplace add jacob-cha-builder/remotion-script-to-motion --scope local
-claude plugin install script-to-motion@remotion-script-to-motion --scope local
+claude plugin marketplace add jacob-cha-builder/hyperframes-ko --scope local
+claude plugin install script-to-motion@hyperframes-ko --scope local
 ```
 
 `core-skills@hyperframes` 가 **의존성으로 자동 설치**된다. 다만 마켓플레이스는 자동 등록되지
