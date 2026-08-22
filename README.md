@@ -127,7 +127,8 @@ plugins/script-to-motion/
 ├── skills/ko-video/SKILL.md        # /hyperframes 에 붙는 보조 레이어
 ├── references/
 │   ├── korean-narration.md         # 발화 속도 · 조사 · 숫자 · 카피 예산
-│   └── korean-typography.md        # @font-face 폴백 · keep-all 줄바꿈
+│   ├── korean-typography.md        # @font-face 폴백 · keep-all 줄바꿈
+│   └── korean-prompting.md         # 상류 프롬프트 스켈레톤에 얹는 한국어 델타
 ├── hooks/hooks.json                # SCRIPT.md 저장 시 자동 검사
 └── scripts/                        # 의존성 0 (Node 내장 + piper/ffprobe 서브프로세스)
     ├── check-script.mjs            # 게이트 — 상류 산출물을 읽는다

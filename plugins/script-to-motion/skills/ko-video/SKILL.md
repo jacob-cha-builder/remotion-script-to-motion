@@ -85,6 +85,19 @@ npx hyperframes transcribe videos/<name>/audio/line-01.wav --language ko --json
 추정이 통과해도 실측에서 걸릴 수 있다 — 실제로 그런 사례가 있다 (추정 3.96초 통과 →
 실측 4.08초로 여백 0.42초 < 0.45초 실패). 그래서 두 번 돌린다.
 
+## 사용자가 프롬프트를 쓸 때
+
+`references/korean-prompting.md` 를 읽어라. 상류 프롬프팅 문서
+(<https://hyperframes.heygen.com/prompting/overview>, 오프라인은
+`~/.claude/plugins/marketplaces/hyperframes/docs/prompting/*.mdx` 32개)에 얹는 델타다. 요지:
+
+- **길이를 선언하지 마라.** 상류는 `8-second video` 처럼 선언하지만, 한국어는 대본에서
+  길이를 **도출**한다. 프롬프트에는 음절 예산을 준다 (20초/4씬 ≈ 한글 82음절).
+- **`[copy]` 를 화면/나레이션 두 필드로 쪼개라.** `"14가지"` (화면) vs `"열네 가지입니다"` (나레이션).
+- **`[negatives]` 에 `ko-tts` 를 명시하라.** 안 그러면 기본 Kokoro 경로로 흘러가는데 한국어가 없다.
+- **나레이션에는 스펙 다이얼이 없다** — 비주얼은 무드 워드로 맡겨도 되지만 나레이션 문장은
+  항상 최종 문장 그대로여야 한다. 추정기가 그 문자열을 센다.
+
 ## 대본을 쓸 때
 
 `references/korean-narration.md` 를 읽어라. 요지:
