@@ -5,3 +5,13 @@ out/
 
 # 내부 작업 기록 — 계획서·증거 파일은 로컬에만 둔다
 .lazycc/
+
+# 한국어 TTS 런타임 — 크고 재생성 가능하다 (README 의 설치 절 참고)
+.venv/
+voices/
+
+# HyperFrames 생성물
+videos/*/renders/
+videos/*/snapshots/
+videos/*/.thumbnails/
+videos/*/.waveform-cache/

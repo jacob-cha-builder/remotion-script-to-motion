@@ -73,8 +73,12 @@ mkdir -p voices && curl -L -o voices/ko_KR-kss-medium.onnx \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/ko/ko_KR/kss/medium/ko_KR-kss-medium.onnx
 curl -L -o voices/ko_KR-kss-medium.onnx.json \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/ko/ko_KR/kss/medium/ko_KR-kss-medium.onnx.json
-export PIPER_PYTHON=$PWD/.venv/bin/python
-export PIPER_VOICE=$PWD/voices/ko_KR-kss-medium.onnx
+```
+
+그 뒤로는 **세션마다 한 줄**이면 된다 (`.venv/` 와 `voices/` 는 gitignore 된다):
+
+```bash
+source tts-env.sh
 ```
 
 > **한국어 음성은 `kss/medium` 하나뿐이다** (2026-08 기준) — 여성 단일 화자, medium 등급.
